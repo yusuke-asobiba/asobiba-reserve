@@ -63,39 +63,6 @@ with st.form(key="chat_form", clear_on_submit=True):
             "time": dt.now().strftime("%Y-%m-%d %H:%M")
         })
 
-# --- チャット表示 ---
-for chat in st.session_state["chat_logs"]:
-    is_self = chat["sender"] == current_user
-    align = "flex-end" if is_self else "flex-start"
-    bg_color = "#dcf8c6" if is_self else "#ffffff"
-    sender_color = "#34b7f1" if is_self else "#999999"
-
-    bubble_style = f"""
-        background-color: {bg_color};
-        padding: 10px;
-        border-radius: 10px;
-        margin: 5px;
-        max-width: 90%;
-        word-wrap: break-word;
-    """
-    sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
-    safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
-    
-    image_html = ""
-    if chat["img"]:
-        image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">'
-
-    chat_html = f"""
-    <div style="display: flex; justify-content: {align};">
-        <div style="{bubble_style}">
-            <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
-            <div style="color: black;">{safe_text}</div>
-            {image_html}
-        </div>
-    </div>
-    """
-    st.markdown(chat_html, unsafe_allow_html=True)
-    
 # チャット表示（モバイル用に幅拡大）
 for chat in st.session_state["chat_logs"]:
     is_self = chat["sender"] == current_user
