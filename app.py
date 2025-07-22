@@ -5,7 +5,7 @@ import base64
 
 st.set_page_config(page_title="ASOBIBA予約＋作業報告チャット", layout="centered")
 
-st.title("🏠 ＡＳＯＢＩＢＡ専用アプリ")
+st.markdown("<h1 style='text-align: center; font-size:28px;'>🏠 ASOBIBA専用アプリ</h1>", unsafe_allow_html=True)
 
 # --- セッション状態の初期化 ---
 if "reservations" not in st.session_state:
@@ -89,10 +89,10 @@ for chat in st.session_state["chat_logs"]:
             <div style="display: flex; justify-content: {align};">
                 <div style="{bubble_style}">
                     <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
-                    <div>{chat['text']}</div>
-                    {'<img src="data:image/png;base64,' + chat['img'] + '" width="100%" style="margin-top:5px;">' if chat['img'] else ''}
+                   <div style="color: black;">{chat['text']}</div>
+{f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">' if chat['img'] else ''}
                 </div>
             </div>
-            """,
+            """,S
             unsafe_allow_html=True
         )
