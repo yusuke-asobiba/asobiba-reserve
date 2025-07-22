@@ -1,5 +1,5 @@
-# Re-run the updated code after reset to maintain continuity
 import streamlit as st
+import streamlit.components.v1 as components
 import datetime
 import base64
 
@@ -48,7 +48,7 @@ else:
     st.info("まだ予約はありません")
 
 # --- 作業報告チャット（LINE風） ---
-st.subheader("📩 ASOBIBA専用チャット")
+st.subheader("📩 ＡＳＯＢＩＢＡ専用チャット")
 
 # 入力フォーム
 with st.form(key="chat_form", clear_on_submit=True):
@@ -89,14 +89,14 @@ for chat in st.session_state["chat_logs"]:
     else:
         image_html = ""
 
-    with st.container():
-        html = f"""
-        <div style="display: flex; justify-content: {align};">
-            <div style="{bubble_style}">
-                <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
-                <div style="color: black;">{safe_text}</div>
-                {image_html}
-            </div>
+    html = f"""
+    <div style="display: flex; justify-content: {align};">
+        <div style="{bubble_style}">
+            <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
+            <div style="color: black;">{safe_text}</div>
+            {image_html}
         </div>
-        """
-        st.markdown(html, unsafe_allow_html=True)
+    </div>
+    """
+
+    components.html(html, height=160, scrolling=False)
