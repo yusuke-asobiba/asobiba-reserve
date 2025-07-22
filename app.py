@@ -48,7 +48,7 @@ else:
     st.info("まだ予約はありません")
 
 # --- 作業報告チャット（LINE風） ---
-st.subheader("📩 ＡＳＯＢＩＢＡ専用チャット")
+st.subheader("📩 ASOBIBA専用チャット")
 
 # 入力フォーム
 with st.form(key="chat_form", clear_on_submit=True):
