@@ -1,28 +1,29 @@
 import streamlit as st
 import datetime
 import base64
+from streamlit.components.v1 import html as components_html
 
 st.set_page_config(page_title="ASOBIBA予約＋作業報告チャット", layout="centered")
 
-# --- 共通フォント設定（Meiryo優先、日本語もキレイ） ---
-font_family = "'Meiryo', sans-serif"
+st.markdown("""
+    <style>
+    * { font-family: 'Meiryo', sans-serif; }
+    </style>
+""", unsafe_allow_html=True)
 
-st.markdown(
-    f"<h1 style='text-align: center; font-size:28px; font-family: {font_family};'>🏠 ASOBIBA専用アプリ</h1>",
-    unsafe_allow_html=True
-)
+st.markdown("<h1 style='text-align: center; font-size:28px;'>🏠 ASOBIBA専用アプリ</h1>", unsafe_allow_html=True)
 
 # --- セッション状態の初期化 ---
 if "reservations" not in st.session_state:
-    st.session_state["reservations"] = {}  # {(facility, date): name}
+    st.session_state["reservations"] = {}
 if "chat_logs" not in st.session_state:
     st.session_state["chat_logs"] = []
 
-# --- 会員選択（ログインユーザー） ---
+# --- 会員選択 ---
 members = ["ユーザーＡ", "ユーザーＢ"]
 current_user = st.selectbox("🔰 現在ログイン中のユーザーを選んでください", members)
 
-# --- 施設選択フォーム ---
+# --- 施設選択 ---
 facilities = ["施設A", "施設B"]
 selected_facility = st.selectbox("🏢 予約する施設を選んでください", facilities)
 
@@ -52,8 +53,8 @@ if st.session_state["reservations"]:
 else:
     st.info("まだ予約はありません")
 
-# --- 作業報告チャット（LINE風） ---
-st.subheader("📩 ＡＳＯＢＩＢＡ専用チャット")
+# --- 作業報告チャット ---
+st.subheader("📩 ASOBIBA専用チャット")
 
 # 入力フォーム
 with st.form(key="chat_form", clear_on_submit=True):
@@ -85,22 +86,18 @@ for chat in st.session_state["chat_logs"]:
         margin: 5px;
         max-width: 90%;
         word-wrap: break-word;
-        font-family: {font_family};
     """
-    sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px; font-family: {font_family};"
+    sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
 
-    image_html = ""
-    if chat["img"]:
-        image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">'
-
-    html = f"""
-    <div style="display: flex; justify-content: {align}; font-family: {font_family};">
+    html_block = f"""
+    <div style="display: flex; justify-content: {align};">
         <div style="{bubble_style}">
             <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
             <div style="color: black;">{safe_text}</div>
-            {image_html}
+            {'<img src="data:image/png;base64,' + chat['img'] + '" style="width:100%; margin-top:5px;">' if chat['img'] else ''}
         </div>
     </div>
     """
-    st.markdown(html, unsafe_allow_html=True)
+
+    components_html(html_block, height=250, scrolling=True)
