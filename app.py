@@ -3,19 +3,26 @@ import datetime
 import base64
 
 st.set_page_config(page_title="ASOBIBA予約＋作業報告チャット", layout="centered")
-st.markdown("<h1 style='text-align: center; font-size:28px;'>🏠 ASOBIBA専用アプリ</h1>", unsafe_allow_html=True)
+
+# --- 共通フォント設定（Meiryo優先、日本語もキレイ） ---
+font_family = "'Meiryo', sans-serif"
+
+st.markdown(
+    f"<h1 style='text-align: center; font-size:28px; font-family: {font_family};'>🏠 ASOBIBA専用アプリ</h1>",
+    unsafe_allow_html=True
+)
 
 # --- セッション状態の初期化 ---
 if "reservations" not in st.session_state:
-    st.session_state["reservations"] = {}
+    st.session_state["reservations"] = {}  # {(facility, date): name}
 if "chat_logs" not in st.session_state:
     st.session_state["chat_logs"] = []
 
-# --- ユーザー選択 ---
+# --- 会員選択（ログインユーザー） ---
 members = ["ユーザーＡ", "ユーザーＢ"]
 current_user = st.selectbox("🔰 現在ログイン中のユーザーを選んでください", members)
 
-# --- 施設選択 ---
+# --- 施設選択フォーム ---
 facilities = ["施設A", "施設B"]
 selected_facility = st.selectbox("🏢 予約する施設を選んでください", facilities)
 
@@ -45,8 +52,10 @@ if st.session_state["reservations"]:
 else:
     st.info("まだ予約はありません")
 
-# --- 作業報告チャット ---
+# --- 作業報告チャット（LINE風） ---
 st.subheader("📩 ＡＳＯＢＩＢＡ専用チャット")
+
+# 入力フォーム
 with st.form(key="chat_form", clear_on_submit=True):
     message = st.text_input("✏️コメントを入力してください")
     image_file = st.file_uploader("🖼️画像を添付出来ます", type=["png", "jpg", "jpeg"])
@@ -59,13 +68,11 @@ with st.form(key="chat_form", clear_on_submit=True):
         st.session_state["chat_logs"].append({
             "sender": current_user,
             "text": message,
-            "img": img_data if img_data else "",
+            "img": img_data,
             "time": dt.now().strftime("%Y-%m-%d %H:%M")
         })
 
-import streamlit.components.v1 as components
-
-# チャット表示（HTML直描画で亡霊排除）
+# チャット表示
 for chat in st.session_state["chat_logs"]:
     is_self = chat["sender"] == current_user
     align = "flex-end" if is_self else "flex-start"
@@ -78,16 +85,17 @@ for chat in st.session_state["chat_logs"]:
         margin: 5px;
         max-width: 90%;
         word-wrap: break-word;
+        font-family: {font_family};
     """
-    sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
+    sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px; font-family: {font_family};"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
 
     image_html = ""
-    if chat.get("img") and isinstance(chat["img"], str) and chat["img"].strip():
+    if chat["img"]:
         image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">'
 
     html = f"""
-    <div style="display: flex; justify-content: {align};">
+    <div style="display: flex; justify-content: {align}; font-family: {font_family};">
         <div style="{bubble_style}">
             <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
             <div style="color: black;">{safe_text}</div>
@@ -95,5 +103,4 @@ for chat in st.session_state["chat_logs"]:
         </div>
     </div>
     """
-
-    components.html(html, height=150, scrolling=False)
+    st.markdown(html, unsafe_allow_html=True)
