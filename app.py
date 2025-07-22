@@ -84,19 +84,16 @@ for chat in st.session_state["chat_logs"]:
     sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
 
     with st.container():
+        image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">' if chat["img"] else ''
+        safe_text = chat["text"].replace('<', '&lt;').replace('>', '&gt;')
         st.markdown(
             f"""
             <div style="display: flex; justify-content: {align};">
                 <div style="{bubble_style}">
                     <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
-                    <div style="color: black;">{chat['text'].replace('<', '&lt;').replace('>', '&gt;')}</div>
-                    {f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">' if chat['img'] else ''}
+                    <div style="color: black;">{safe_text}</div>
+                    {image_html}
                 </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
             </div>
             """,
             unsafe_allow_html=True
