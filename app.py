@@ -63,13 +63,14 @@ with st.form(key="chat_form", clear_on_submit=True):
             "time": dt.now().strftime("%Y-%m-%d %H:%M")
         })
 
-# チャット表示（モバイル用に幅拡大）
+import streamlit.components.v1 as components
+
+# チャット表示（HTML直描画で亡霊排除）
 for chat in st.session_state["chat_logs"]:
     is_self = chat["sender"] == current_user
     align = "flex-end" if is_self else "flex-start"
     bg_color = "#dcf8c6" if is_self else "#ffffff"
     sender_color = "#34b7f1" if is_self else "#999999"
-
     bubble_style = f"""
         background-color: {bg_color};
         padding: 10px;
@@ -81,13 +82,11 @@ for chat in st.session_state["chat_logs"]:
     sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
 
-    # 🎯 完全に画像あるときだけHTML生成
     image_html = ""
-    if chat.get("img") and isinstance(chat["img"], str) and chat["img"].strip() not in ["", "None", "null"]:
+    if chat.get("img") and isinstance(chat["img"], str) and chat["img"].strip():
         image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">'
 
-    # 👻 空タグ削除＆改行抑制 → 最後に strip で念押し
-    chat_html = f"""
+    html = f"""
     <div style="display: flex; justify-content: {align};">
         <div style="{bubble_style}">
             <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
@@ -95,10 +94,6 @@ for chat in st.session_state["chat_logs"]:
             {image_html}
         </div>
     </div>
-    """.strip()
+    """
 
-    # 🔥 最後の除霊アイテム：HTMLの末尾に</div>が残ってないか検査
-    if "</div>" in chat_html and chat_html.strip().endswith("</div>"):
-        st.markdown(chat_html, unsafe_allow_html=True)
-    else:
-        st.markdown(chat_html + " ", unsafe_allow_html=True)  # 最後にスペースを入れてレンダ崩れ防止
+    components.html(html, height=150, scrolling=False)
