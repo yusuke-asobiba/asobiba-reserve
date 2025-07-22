@@ -1,23 +1,21 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import datetime
 import base64
 
 st.set_page_config(page_title="ASOBIBA予約＋作業報告チャット", layout="centered")
-
 st.markdown("<h1 style='text-align: center; font-size:28px;'>🏠 ASOBIBA専用アプリ</h1>", unsafe_allow_html=True)
 
 # --- セッション状態の初期化 ---
 if "reservations" not in st.session_state:
-    st.session_state["reservations"] = {}  # {(facility, date): name}
+    st.session_state["reservations"] = {}
 if "chat_logs" not in st.session_state:
     st.session_state["chat_logs"] = []
 
-# --- 会員選択（ログインユーザー） ---
+# --- ユーザー選択 ---
 members = ["ユーザーＡ", "ユーザーＢ"]
 current_user = st.selectbox("🔰 現在ログイン中のユーザーを選んでください", members)
 
-# --- 施設選択フォーム追加 ---
+# --- 施設選択 ---
 facilities = ["施設A", "施設B"]
 selected_facility = st.selectbox("🏢 予約する施設を選んでください", facilities)
 
@@ -47,10 +45,8 @@ if st.session_state["reservations"]:
 else:
     st.info("まだ予約はありません")
 
-# --- 作業報告チャット（LINE風） ---
+# --- 作業報告チャット ---
 st.subheader("📩 ＡＳＯＢＩＢＡ専用チャット")
-
-# 入力フォーム
 with st.form(key="chat_form", clear_on_submit=True):
     message = st.text_input("✏️コメントを入力してください")
     image_file = st.file_uploader("🖼️画像を添付出来ます", type=["png", "jpg", "jpeg"])
@@ -63,16 +59,17 @@ with st.form(key="chat_form", clear_on_submit=True):
         st.session_state["chat_logs"].append({
             "sender": current_user,
             "text": message,
-            "img": img_data,
+            "img": img_data if img_data else "",
             "time": dt.now().strftime("%Y-%m-%d %H:%M")
         })
 
-# チャット表示（モバイル用に幅拡大）
+# --- チャット表示 ---
 for chat in st.session_state["chat_logs"]:
     is_self = chat["sender"] == current_user
     align = "flex-end" if is_self else "flex-start"
     bg_color = "#dcf8c6" if is_self else "#ffffff"
     sender_color = "#34b7f1" if is_self else "#999999"
+
     bubble_style = f"""
         background-color: {bg_color};
         padding: 10px;
@@ -83,13 +80,12 @@ for chat in st.session_state["chat_logs"]:
     """
     sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
-
+    
+    image_html = ""
     if chat["img"]:
         image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">'
-    else:
-        image_html = ""
 
-    html = f"""
+    chat_html = f"""
     <div style="display: flex; justify-content: {align};">
         <div style="{bubble_style}">
             <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
@@ -98,5 +94,4 @@ for chat in st.session_state["chat_logs"]:
         </div>
     </div>
     """
-
-    components.html(html, height=160, scrolling=False)
+    st.markdown(chat_html, unsafe_allow_html=True)
