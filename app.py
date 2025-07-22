@@ -89,9 +89,14 @@ for chat in st.session_state["chat_logs"]:
             <div style="display: flex; justify-content: {align};">
                 <div style="{bubble_style}">
                     <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
-                    <div style="color: black;">{chat['text']}</div>
+                    <div style="color: black;">{chat['text'].replace('<', '&lt;').replace('>', '&gt;')}</div>
                     {f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">' if chat['img'] else ''}
                 </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
             </div>
             """,
             unsafe_allow_html=True
