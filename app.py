@@ -82,19 +82,21 @@ for chat in st.session_state["chat_logs"]:
         word-wrap: break-word;
     """
     sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
+    safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
+
+    if chat["img"]:
+        image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">'
+    else:
+        image_html = ""
 
     with st.container():
-        image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">' if chat["img"] else ''
-        safe_text = chat["text"].replace('<', '&lt;').replace('>', '&gt;')
-        st.markdown(
-            f"""
-            <div style="display: flex; justify-content: {align};">
-                <div style="{bubble_style}">
-                    <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
-                    <div style="color: black;">{safe_text}</div>
-                    {image_html}
-                </div>
+        html = f"""
+        <div style="display: flex; justify-content: {align};">
+            <div style="{bubble_style}">
+                <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
+                <div style="color: black;">{safe_text}</div>
+                {image_html}
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+        </div>
+        """
+        st.markdown(html, unsafe_allow_html=True)
