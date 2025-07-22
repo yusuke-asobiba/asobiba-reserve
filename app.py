@@ -81,11 +81,12 @@ for chat in st.session_state["chat_logs"]:
     sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
 
-    # 👻 画像が正しくあるときだけ表示（None, '', null すべて対策）
+    # 🎯 完全に画像あるときだけHTML生成
     image_html = ""
-    if chat.get("img") and isinstance(chat["img"], str) and len(chat["img"].strip()) > 0:
+    if chat.get("img") and isinstance(chat["img"], str) and chat["img"].strip() not in ["", "None", "null"]:
         image_html = f'<img src="data:image/png;base64,{chat["img"]}" width="100%" style="margin-top:5px;">'
 
+    # 👻 空タグ削除＆改行抑制 → 最後に strip で念押し
     chat_html = f"""
     <div style="display: flex; justify-content: {align};">
         <div style="{bubble_style}">
@@ -94,5 +95,10 @@ for chat in st.session_state["chat_logs"]:
             {image_html}
         </div>
     </div>
-    """
-    st.markdown(chat_html, unsafe_allow_html=True)
+    """.strip()
+
+    # 🔥 最後の除霊アイテム：HTMLの末尾に</div>が残ってないか検査
+    if "</div>" in chat_html and chat_html.strip().endswith("</div>"):
+        st.markdown(chat_html, unsafe_allow_html=True)
+    else:
+        st.markdown(chat_html + " ", unsafe_allow_html=True)  # 最後にスペースを入れてレンダ崩れ防止
