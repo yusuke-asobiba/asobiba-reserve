@@ -23,12 +23,11 @@ if "chat_logs" not in st.session_state:
 members = ["ユーザーＡ", "ユーザーＢ"]
 current_user = st.selectbox("🔰 現在ログイン中のユーザーを選んでください", members)
 
+# --- 予約フォーム ---
+st.subheader("📅 予約フォーム")
 # --- 施設選択 ---
 facilities = ["施設A", "施設B"]
 selected_facility = st.selectbox("🏢 予約する施設を選んでください", facilities)
-
-# --- 予約フォーム ---
-st.subheader("📅 予約フォーム")
 name = current_user
 date = st.date_input("希望日を選んでください", min_value=datetime.date.today())
 reservation_key = (selected_facility, str(date))
