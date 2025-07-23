@@ -5,6 +5,7 @@ from datetime import datetime as dt
 
 st.set_page_config(page_title="ASOBIBA予約＋作業報告チャット", layout="centered")
 
+# CSSカスタマイズ
 st.markdown("""
     <style>
     * { font-family: 'Meiryo', sans-serif; }
@@ -15,15 +16,13 @@ st.markdown("""
         margin-bottom: 4px;
         max-width: 90%;
         word-wrap: break-word;
-        font-family: 'Meiryo', sans-serif;
     }
     .chat-meta {
         color: #34b7f1;
         font-size: 12px;
         margin-bottom: 4px;
     }
-    /* 英語Uploader UIの見た目調整 */
-    .uploadedFile { 
+    .uploadedFile {
         color: gray !important;
         font-size: 12px !important;
         background-color: #d8f3dc !important;
@@ -34,78 +33,91 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align: center; font-size:28px;'>🏠 ASOBIBA専用アプリ</h1>", unsafe_allow_html=True)
-
+# セッションステート初期化
 if "reservations" not in st.session_state:
     st.session_state["reservations"] = {}
 if "chat_logs" not in st.session_state:
     st.session_state["chat_logs"] = []
+if "current_user" not in st.session_state:
+    st.session_state["current_user"] = "ユーザーＡ"
 
 members = ["ユーザーＡ", "ユーザーＢ"]
-current_user = st.selectbox("🔰 現在ログイン中のユーザーを選んでください", members)
 
-st.subheader("📅 予約フォーム")
-facilities = ["施設A", "施設B"]
-selected_facility = st.selectbox("🏢 予約する施設を選んでください", facilities)
-name = current_user
-date = st.date_input("希望日を選んでください", min_value=datetime.date.today())
-reservation_key = (selected_facility, str(date))
-is_reserved = st.session_state["reservations"].get(reservation_key)
+# タブ構成
+tab1, tab2, tab3 = st.tabs(["👤 ユーザー選択", "📅 予約フォーム", "💬 チャット"])
 
-if is_reserved:
-    st.warning(f"{selected_facility} はこの日すでに {is_reserved} さんが予約済です")
-else:
-    if st.button("予約する", use_container_width=True):
-        st.session_state["reservations"][reservation_key] = name
-        st.success(f"{selected_facility} の予約を {date} に受け付けました（{name} さん）")
+# ユーザー選択
+with tab1:
+    st.markdown("<h2>🏠 ASOBIBA専用アプリ</h2>", unsafe_allow_html=True)
+    st.session_state["current_user"] = st.selectbox("🟩 現在ログイン中のユーザーを選んでください", members)
 
-st.subheader("📝 予約一覧")
-if st.session_state["reservations"]:
-    for (fac, d), n in sorted(st.session_state["reservations"].items(), key=lambda x: (x[0][1], x[0][0])):
-        day = dt.strptime(d, "%Y-%m-%d")
-        weekday_ja = ["月", "火", "水", "木", "金", "土", "日"]
-        weekday = weekday_ja[day.weekday()]
-        st.write(f"✅【{fac}】{day.strftime('%m月%d日')}（{weekday}）：{n} さん")
-else:
-    st.info("まだ予約はありません")
+# 予約ページ
+with tab2:
+    st.markdown("<h2>📅 予約フォーム</h2>", unsafe_allow_html=True)
+    facilities = ["施設A", "施設B"]
+    selected_facility = st.selectbox("🏢 予約する施設を選んでください", facilities)
+    name = st.session_state["current_user"]
+    date = st.date_input("希望日を選んでください", min_value=datetime.date.today())
+    reservation_key = (selected_facility, str(date))
+    is_reserved = st.session_state["reservations"].get(reservation_key)
 
-st.subheader("📩 ASOBIBA専用チャット")
-with st.form(key="chat_form", clear_on_submit=True):
-    message = st.text_input("✏️ コメントを入力してください")
+    if is_reserved:
+        st.warning(f"{selected_facility} はこの日すでに {is_reserved} さんが予約済です")
+    else:
+        if st.button("予約する", use_container_width=True):
+            st.session_state["reservations"][reservation_key] = name
+            st.success(f"{selected_facility} の予約を {date} に受け付けました（{name} さん）")
 
-    # 📷 カスタムアップロードボタン
-    st.markdown("""
-        <label for="file_uploader" style="display: block; font-size: 16px; font-weight: normal; color: white; margin-top: 10px;">
-            📷 写真or画像を↓から添付可能
-        </label>
-    """, unsafe_allow_html=True)
+    st.subheader("📝 予約一覧")
+    if st.session_state["reservations"]:
+        for (fac, d), n in sorted(st.session_state["reservations"].items(), key=lambda x: (x[0][1], x[0][0])):
+            day = dt.strptime(d, "%Y-%m-%d")
+            weekday_ja = ["月", "火", "水", "木", "金", "土", "日"]
+            weekday = weekday_ja[day.weekday()]
+            st.write(f"✅【{fac}】{day.strftime('%m月%d日')}（{weekday}）：{n} さん")
+    else:
+        st.info("まだ予約はありません")
 
-    image_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
+# チャットページ
+with tab3:
+    st.markdown("<h2>📩 ASOBIBA専用チャット</h2>", unsafe_allow_html=True)
+    with st.form(key="chat_form", clear_on_submit=True):
+        message = st.text_input("✏️ コメントを入力してください")
 
-    submitted = st.form_submit_button("送信", use_container_width=True)
+        # カスタムアップロードボタン
+        st.markdown("""
+            <label for="file_uploader" style="display: block; font-size: 16px; font-weight: normal; color: white; margin-top: 10px;">
+                📷 写真or画像を ↓から添付可能
+            </label>
+        """, unsafe_allow_html=True)
 
-    if submitted and message:
-        img_data = None
-        if image_file:
-            img_data = base64.b64encode(image_file.read()).decode()
-        st.session_state["chat_logs"].append({
-            "sender": current_user,
-            "text": message.replace("<", "&lt;").replace(">", "&gt;"),
-            "img": img_data,
-            "time": dt.now().strftime("%Y-%m-%d %H:%M")
-        })
+        image_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
+        submitted = st.form_submit_button("送信", use_container_width=True)
 
-for chat in st.session_state["chat_logs"]:
-    align = "flex-end" if chat["sender"] == current_user else "flex-start"
-    sender_color = "#34b7f1" if chat["sender"] == current_user else "#999999"
-    ghost_notice = "👻" if not chat["img"] else ""
+        if submitted and message:
+            img_data = None
+            if image_file:
+                img_data = base64.b64encode(image_file.read()).decode()
+            st.session_state["chat_logs"].append({
+                "sender": st.session_state["current_user"],
+                "text": message.replace("<", "&lt;").replace(">", "&gt;"),
+                "img": img_data,
+                "time": dt.now().strftime("%Y-%m-%d %H:%M")
+            })
 
-    st.markdown(f"""
-        <div style="display: flex; justify-content: {align};">
-            <div class="chat-bubble">
-                <div class="chat-meta" style="color: {sender_color};">{chat['sender']}（{chat['time']}）</div>
-                <div style="color: black;">{chat['text']}</div>
-                {f'<img src="data:image/png;base64,{chat["img"]}" style="width:100%; margin-top:5px;">' if chat["img"] else ghost_notice}
+    # チャット表示
+    for chat in st.session_state["chat_logs"]:
+        align = "flex-end" if chat["sender"] == st.session_state["current_user"] else "flex-start"
+        sender_color = "#34b7f1" if chat["sender"] == st.session_state["current_user"] else "#999999"
+        ghost_notice = "👻" if not chat["img"] else ""
+
+        st.markdown(f"""
+            <div style="display: flex; justify-content: {align};">
+                <div class="chat-bubble">
+                    <div class="chat-meta" style="color: {sender_color};">{chat['sender']}（{chat['time']}）</div>
+                    <div style="color: black;">{chat['text']}</div>
+                    {f'<img src="data:image/png;base64,{chat["img"]}" style="width:100%; margin-top:5px;">' if chat["img"] else ghost_notice}
+                </div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+
