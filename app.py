@@ -64,7 +64,7 @@ st.subheader("📩 ASOBIBA専用チャット")
 with st.form(key="chat_form", clear_on_submit=True):
     message = st.text_input("✏️コメントを入力してください")
 
-      uploaded_file = st.file_uploader(
+        uploaded_file = st.file_uploader(
         label="",
         type=["png", "jpg", "jpeg"],
         label_visibility="collapsed"
