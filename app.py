@@ -80,7 +80,7 @@ with tab2:
 
 # チャットページ
 with tab3:
-    st.markdown("<h2>📩 ユーザー専用チャット</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>📩 専用チャット</h2>", unsafe_allow_html=True)
     with st.form(key="chat_form", clear_on_submit=True):
         message = st.text_input("✏️ コメントを入力してください")
 
