@@ -73,31 +73,39 @@ with st.form(key="chat_form", clear_on_submit=True):
             "time": dt.now().strftime("%Y-%m-%d %H:%M")
         })
 
-# チャット表示
+# --- チャット表示（👻完全除去・画像全体表示・フォント統一） ---
 for chat in st.session_state["chat_logs"]:
     is_self = chat["sender"] == current_user
     align = "flex-end" if is_self else "flex-start"
     bg_color = "#dcf8c6" if is_self else "#ffffff"
     sender_color = "#34b7f1" if is_self else "#999999"
+    
+    # スタイル（間隔狭め、フォント統一、不要タグなし）
     bubble_style = f"""
         background-color: {bg_color};
         padding: 10px;
         border-radius: 10px;
-        margin: 3px;
+        margin: 2px 0px;
         max-width: 90%;
         word-wrap: break-word;
         font-family: 'Meiryo', sans-serif;
     """
     sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px; font-family: 'Meiryo', sans-serif;"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
+    
+    # 画像あればリサイズ（幅100%、高さは自動）
+    image_html = f'<img src="data:image/png;base64,{chat["img"]}" style="width:100%; margin-top:5px;">' if chat["img"] else ""
 
-    html_block = f"""
-    <div style="display: flex; justify-content: {align};">
-        <div style="{bubble_style}">
-            <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
-            <div style="color: black;">{safe_text}</div>
-            {'<img src="data:image/png;base64,' + chat['img'] + '" style="width:100%; margin-top:5px;">' if chat['img'] else ''}
+    st.markdown(
+        f"""
+        <div style="display: flex; justify-content: {align}; font-family: 'Meiryo', sans-serif;">
+            <div style="{bubble_style}">
+                <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
+                <div style="color: black;">{safe_text}</div>
+                {image_html}
+            </div>
         </div>
-    </div>
-    """
-    st.markdown(html_block, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
+
