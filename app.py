@@ -76,7 +76,7 @@ with st.form(key="chat_form", clear_on_submit=True):
     # 📷 カスタムアップロードボタン
     st.markdown("""
         <label for="file_uploader" style="display: block; font-size: 16px; font-weight: normal; color: white; margin-top: 10px;">
-            📷 ここをクリックして画像を選択（またはドラッグ＆ドロップ）
+            📷 写真or画像を↓から添付可能
         </label>
     """, unsafe_allow_html=True)
 
