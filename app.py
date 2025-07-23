@@ -1,15 +1,13 @@
 import streamlit as st
 import datetime
 import base64
+from datetime import datetime as dt
 
 st.set_page_config(page_title="ASOBIBA予約＋作業報告チャット", layout="centered")
 
-# --- 共通CSS（フォント・スタイル） ---
 st.markdown("""
     <style>
-    * {
-        font-family: 'Meiryo', sans-serif;
-    }
+    * { font-family: 'Meiryo', sans-serif; }
     .chat-bubble {
         background-color: #dcf8c6;
         padding: 10px;
@@ -17,46 +15,35 @@ st.markdown("""
         margin-bottom: 4px;
         max-width: 90%;
         word-wrap: break-word;
+        font-family: 'Meiryo', sans-serif;
     }
     .chat-meta {
         color: #34b7f1;
         font-size: 12px;
         margin-bottom: 4px;
     }
-    /* 📌 英語Uploader UI の非目立ち調整 */
-    .uploadedFile, .element-container:has(>.uploadedFile) {
+    /* 英語Uploader UIの見た目調整 */
+    .uploadedFile { 
         color: gray !important;
-        font-size: 10px !important;
-        background-color: #e0f2e9 !important;
-        padding: 4px !important;
-        border-radius: 5px !important;
-        margin-top: 4px;
-        width: 220px !important;
-    }
-    /* 📌 カスタム日本語ボタンの見た目調整（コメント欄に合わせて） */
-    .custom-upload-label {
-        display: inline-block;
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 6px;
-        color: white;
+        font-size: 12px !important;
+        background-color: #d8f3dc !important;
+        padding: 4px;
+        border-radius: 5px;
+        width: 90%;
     }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<h1 style='text-align: center; font-size:28px;'>🏠 ASOBIBA専用アプリ</h1>", unsafe_allow_html=True)
 
-# --- セッション状態 ---
 if "reservations" not in st.session_state:
     st.session_state["reservations"] = {}
 if "chat_logs" not in st.session_state:
     st.session_state["chat_logs"] = []
 
-# --- 会員選択 ---
 members = ["ユーザーＡ", "ユーザーＢ"]
 current_user = st.selectbox("🔰 現在ログイン中のユーザーを選んでください", members)
 
-# --- 予約フォーム ---
 st.subheader("📅 予約フォーム")
 facilities = ["施設A", "施設B"]
 selected_facility = st.selectbox("🏢 予約する施設を選んでください", facilities)
@@ -72,8 +59,6 @@ else:
         st.session_state["reservations"][reservation_key] = name
         st.success(f"{selected_facility} の予約を {date} に受け付けました（{name} さん）")
 
-# --- 予約一覧 ---
-from datetime import datetime as dt
 st.subheader("📝 予約一覧")
 if st.session_state["reservations"]:
     for (fac, d), n in sorted(st.session_state["reservations"].items(), key=lambda x: (x[0][1], x[0][0])):
@@ -84,23 +69,18 @@ if st.session_state["reservations"]:
 else:
     st.info("まだ予約はありません")
 
-# --- 作業報告チャット ---
 st.subheader("📩 ASOBIBA専用チャット")
 with st.form(key="chat_form", clear_on_submit=True):
-    message = st.text_input("✏️コメントを入力してください")
+    message = st.text_input("✏️ コメントを入力してください")
 
-    # カスタムラベル
+    # 📷 カスタムアップロードボタン
     st.markdown("""
-        <label class="custom-upload-label">
-        📷 ここをクリックして画像を選択（またはドラッグ＆ドロップ）
+        <label for="file_uploader" style="display: block; font-size: 16px; font-weight: normal; color: white; margin-top: 10px;">
+            📷 ここをクリックして画像を選択（またはドラッグ＆ドロップ）
         </label>
     """, unsafe_allow_html=True)
 
-    image_file = st.file_uploader(
-        label="",
-        type=["png", "jpg", "jpeg"],
-        label_visibility="collapsed"
-    )
+    image_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
 
     submitted = st.form_submit_button("送信", use_container_width=True)
 
@@ -115,7 +95,6 @@ with st.form(key="chat_form", clear_on_submit=True):
             "time": dt.now().strftime("%Y-%m-%d %H:%M")
         })
 
-# --- チャット表示（👻ネタ付き） ---
 for chat in st.session_state["chat_logs"]:
     align = "flex-end" if chat["sender"] == current_user else "flex-start"
     sender_color = "#34b7f1" if chat["sender"] == current_user else "#999999"
@@ -130,4 +109,3 @@ for chat in st.session_state["chat_logs"]:
             </div>
         </div>
     """, unsafe_allow_html=True)
-
