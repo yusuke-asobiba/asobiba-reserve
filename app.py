@@ -82,11 +82,12 @@ for chat in st.session_state["chat_logs"]:
         background-color: {bg_color};
         padding: 10px;
         border-radius: 10px;
-        margin: 5px;
+        margin: 2px;
         max-width: 90%;
         word-wrap: break-word;
         font-family: 'Meiryo', sans-serif;
     """
+
     sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px; font-family: 'Meiryo', sans-serif;"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
 
@@ -95,7 +96,7 @@ for chat in st.session_state["chat_logs"]:
         <div style="{bubble_style}">
             <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
             <div style="color: black;">{safe_text}</div>
-            {'<img src="data:image/png;base64,' + chat['img'] + '" style="width:100%; margin-top:5px;">' if chat['img'] else ''}
+           {'<img src="data:image/png;base64,' + chat['img'] + '" style="width:100%; max-height:300px; object-fit: contain; margin-top:5px;">' if chat['img'] else ''}
         </div>
     </div>
     """
