@@ -49,7 +49,7 @@ tab1, tab2, tab3 = st.tabs(["👤 ユーザー選択", "📅 予約フォーム"
 # ユーザー選択
 with tab1:
     st.markdown("<h2>🏠 ASOBIBA専用アプリ</h2>", unsafe_allow_html=True)
-    st.session_state["current_user"] = st.selectbox("🟩 現在ログイン中のユーザーを選んでください", members)
+    st.session_state["current_user"] = st.selectbox("👤 ユーザーを選んでください", members)
 
 # 予約ページ
 with tab2:
@@ -80,7 +80,7 @@ with tab2:
 
 # チャットページ
 with tab3:
-    st.markdown("<h2>📩 専用チャット</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>💬 専用チャット</h2>", unsafe_allow_html=True)
     with st.form(key="chat_form", clear_on_submit=True):
         message = st.text_input("✏️ コメントを入力してください")
 
