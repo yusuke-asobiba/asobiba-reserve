@@ -24,13 +24,14 @@ st.markdown("""
         margin-bottom: 4px;
     }
     /* 📌 英語Uploader UI の非目立ち調整 */
-    .uploadedFile {
+    .uploadedFile, .element-container:has(>.uploadedFile) {
         color: gray !important;
-        font-size: 12px !important;
+        font-size: 10px !important;
         background-color: #e0f2e9 !important;
-        padding: 5px !important;
+        padding: 4px !important;
         border-radius: 5px !important;
         margin-top: 4px;
+        width: 220px !important;
     }
     /* 📌 カスタム日本語ボタンの見た目調整（コメント欄に合わせて） */
     .custom-upload-label {
@@ -38,7 +39,7 @@ st.markdown("""
         font-size: 16px;
         font-weight: 600;
         margin-bottom: 6px;
-        color: black;
+        color: white;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -129,3 +130,4 @@ for chat in st.session_state["chat_logs"]:
             </div>
         </div>
     """, unsafe_allow_html=True)
+
