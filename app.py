@@ -73,7 +73,7 @@ with st.form(key="chat_form", clear_on_submit=True):
             "time": dt.now().strftime("%Y-%m-%d %H:%M")
         })
 
-# チャット表示
+# チャット表示（👻除霊済み・フォント強制Meiryoに）
 for chat in st.session_state["chat_logs"]:
     is_self = chat["sender"] == current_user
     align = "flex-end" if is_self else "flex-start"
@@ -86,12 +86,13 @@ for chat in st.session_state["chat_logs"]:
         margin: 5px;
         max-width: 90%;
         word-wrap: break-word;
+        font-family: 'Meiryo', sans-serif;
     """
-    sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px;"
+    sender_style = f"color: {sender_color}; font-size: 12px; margin-bottom: 2px; font-family: 'Meiryo', sans-serif;"
     safe_text = chat["text"].replace("<", "&lt;").replace(">", "&gt;")
 
     html_block = f"""
-    <div style="display: flex; justify-content: {align};">
+    <div style="display: flex; justify-content: {align}; font-family: 'Meiryo', sans-serif;">
         <div style="{bubble_style}">
             <div style="{sender_style}">{chat['sender']}（{chat['time']}）</div>
             <div style="color: black;">{safe_text}</div>
@@ -100,4 +101,4 @@ for chat in st.session_state["chat_logs"]:
     </div>
     """
 
-    components_html(html_block, height=500, scrolling=True)
+    components_html(html_block, height=250, scrolling=True)
