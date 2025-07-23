@@ -80,12 +80,14 @@ with st.form(key="chat_form", clear_on_submit=True):
 for chat in st.session_state["chat_logs"]:
     align = "flex-end" if chat["sender"] == current_user else "flex-start"
     sender_color = "#34b7f1" if chat["sender"] == current_user else "#999999"
+    ghost_notice = "👻" if not chat["img"] else ""  # ← ここで👻出す条件を定義
+
     st.markdown(f"""
         <div style="display: flex; justify-content: {align};">
             <div class="chat-bubble">
                 <div class="chat-meta" style="color: {sender_color};">{chat['sender']}（{chat['time']}）</div>
                 <div style="color: black;">{chat['text']}</div>
-                {'<img src="data:image/png;base64,' + chat["img"] + '" style="width:100%; margin-top:5px;">' if chat["img"] else ''}
+                {f'<img src="data:image/png;base64,{chat["img"]}" style="width:100%; margin-top:5px;">' if chat["img"] else ghost_notice}
             </div>
         </div>
     """, unsafe_allow_html=True)
