@@ -96,7 +96,7 @@ with st.form(key="chat_form", clear_on_submit=True):
         }
         </style>
         <label class="custom-upload-label">
-            📷 写真or画像を↓ボタンを押して添付できます
+            📷 写真or画像を↓で添付
         </label>
     """, unsafe_allow_html=True)
 
