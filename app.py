@@ -64,13 +64,32 @@ st.subheader("📩 ASOBIBA専用チャット")
 with st.form(key="chat_form", clear_on_submit=True):
     message = st.text_input("✏️コメントを入力してください")
 
-    # ⭐️ここを置き換え⭐️
+      uploaded_file = st.file_uploader(
+        label="",
+        type=["png", "jpg", "jpeg"],
+        label_visibility="collapsed"
+    )
+
     st.markdown("""
-        <label for="file_uploader" style="display: block; font-weight: bold; margin-bottom: 6px;">
-            🖼️ ここをタップして画像を選択（またはドラッグ＆ドロップ）
+        <style>
+        .custom-upload {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .custom-upload:hover {
+            background-color: #45a049;
+        }
+        </style>
+        <label class="custom-upload" for="upload-file">
+            📷 画像を選択（またはドラッグ＆ドロップ）
         </label>
     """, unsafe_allow_html=True)
-    image_file = st.file_uploader("", type=["png", "jpg", "jpeg"], label_visibility="collapsed")
 
     submitted = st.form_submit_button("送信", use_container_width=True)
 
