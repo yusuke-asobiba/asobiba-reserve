@@ -101,4 +101,4 @@ for chat in st.session_state["chat_logs"]:
     </div>
     """
 
-    components_html(html_block, height=250, scrolling=False)
+    components_html(html_block, height=80, scrolling=False)
